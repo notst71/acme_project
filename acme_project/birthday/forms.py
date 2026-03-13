@@ -2,8 +2,10 @@ from django import forms
 from .models import Birthday
 
 
+BEATLES = {'Джон Леннон', 'Пол Маккартни', 'Джордж Харрисон', 'Ринго Старр'}
+
+
 class BirthdayForm(forms.ModelForm):
-    
 
     class Meta:
         model = Birthday
@@ -11,3 +13,13 @@ class BirthdayForm(forms.ModelForm):
         widgets = {
             'birthday': forms.DateInput(attrs={'type': 'date'})
         }
+    
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data['first_name']
+        return first_name.split()[0]
+    
+
+    def clean(self):
+        first_name = self.cleaned_data['first_name']
+        second
