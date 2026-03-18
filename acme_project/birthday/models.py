@@ -1,6 +1,7 @@
 from django.db import models
 from .validators import real_age
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 class Birthday(models.Model):
     first_name = models.CharField('Имя', max_length=20)
@@ -21,3 +22,15 @@ class Birthday(models.Model):
     def get_absolute_url(self):
         return reverse("birthday:detail", kwargs={'pk': self.pk})
     
+class Congratulation(models.Model):
+    text = models.TextField('Текст поздравдления')
+    birthday = models.ForeignKey(
+        Birthday,
+        on_delete=models.CASCADE,
+        related_name='congratulation',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ('created_at',)

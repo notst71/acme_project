@@ -7,6 +7,9 @@ from django.urls import reverse_lazy
 from .forms import BirthdayForm
 from .models import Birthday
 from .utils import calculate_birthday_countdown
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from .forms import CongratulationForm
 
 
 class BirthdayListView(ListView):
@@ -39,3 +42,14 @@ class BirthdayDetailView(DetailView):
             self.object.birthday
         )
         return context
+    
+@login_required
+def add_comment(request, pk):
+    birthday = get_object_or_404(Birthday, pk=pk)
+    form = CongratulationForm(request.POST)
+    if form.is_valid():
+        congratulation = form.save(commit=False)
+        congratulation.author = request.user
+        congratulation.birthday = birthday
+        congratulation.save()
+    return redirect('birhday:detail', pk=pk)
